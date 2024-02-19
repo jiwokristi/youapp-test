@@ -1,3 +1,5 @@
+import { ErrorState } from '@/lib/constants/error-state';
+
 /**
  *  * How to implement errorBEHandler:
  *  @param {Error} error
@@ -18,14 +20,17 @@
   
     <p className="text-14 leading-paragraph mb-32">{description}</p>
  */
-export const errorBEHandler = (error: Error & { digest?: string }): string => {
+
+type ErrorParams = (Error & { digest?: string }) | ErrorState;
+
+export const errorBEHandler = (error: ErrorParams): string => {
   switch (error.message) {
     case 'Invalid credentials':
-      return 'It seems that you submitted the wrong email or password.'
+      return 'It seems that you submitted the wrong email or password.';
     case 'Something went wrong':
-      return 'It seems that something went wrong here.'
+      return 'It seems that something went wrong here.';
 
     default:
-      return ''
+      return '';
   }
-}
+};

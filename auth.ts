@@ -1,5 +1,3 @@
-'use server';
-
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
@@ -22,6 +20,8 @@ export const { auth, signIn, signOut } = NextAuth({
       async authorize(
         credentials: Partial<Record<string, unknown>>,
       ): Promise<any> {
+        'use server';
+
         const parsedCredentials = userSchema.safeParse({
           email: credentials.email,
           password: credentials.password,

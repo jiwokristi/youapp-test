@@ -10,6 +10,7 @@ import { User } from '@/lib/validations/auth';
 import { hashPassword } from '@/lib/helpers/hash';
 
 import { signIn } from '../../../auth';
+import { ErrorState } from '../constants/error-state';
 
 export const getUser = async (email: string): Promise<User | null> => {
   try {
@@ -41,10 +42,7 @@ export const signUp = async (payload: User): Promise<User | null> => {
   }
 };
 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData,
-) {
+export async function authenticate(prevState: ErrorState, formData: FormData) {
   try {
     const credentials = {
       email: formData.get('email'),
@@ -58,9 +56,9 @@ export async function authenticate(
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          throw new Error('Invalid credentials');
+          return { code: 401, message: 'Invalid credentials' } as ErrorState;
         default:
-          throw new Error('Something went wrong');
+          return { code: 500, message: 'Internal server error' } as ErrorState;
       }
     }
   }

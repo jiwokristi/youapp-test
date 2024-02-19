@@ -1,0 +1,51 @@
+export const aboutFormFields = [
+  {
+    id: 1,
+    name: 'name',
+    placeholder: 'Enter name',
+    label: 'Display name:',
+    type: 'text',
+  },
+  {
+    id: 2,
+    name: 'gender',
+    placeholder: 'Select gender',
+    label: 'Gender:',
+    type: 'select',
+  },
+  {
+    id: 3,
+    name: 'dob',
+    placeholder: 'DD MM YYYY',
+    label: 'Birthday:',
+    type: 'date',
+  },
+  {
+    id: 4,
+    name: 'horoscope',
+    placeholder: '--',
+    label: 'Horoscope:',
+    type: 'select',
+  },
+  {
+    id: 5,
+    name: 'zodiac',
+    placeholder: '--',
+    label: 'Zodiac:',
+    type: 'select',
+  },
+  {
+    id: 6,
+    name: 'height',
+    placeholder: 'Add height',
+    label: 'Height:',
+    type: 'select',
+  },
+  {
+    id: 7,
+    name: 'weight',
+    placeholder: 'Add weight',
+    label: 'Weight:',
+    type: 'select',
+  },
+];

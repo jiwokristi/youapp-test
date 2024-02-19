@@ -16,10 +16,69 @@
   }
 
   body {
-    @apply font-normal leading text-gray-900 antialiased;
+    @apply font-medium leading text-white antialiased;
+  }
+
+  body > *:not(:has(#Page__Auth, #Page__Register)) {
+    @apply bg-initial-state;
+  }
+
+  body > *:has(#Page__Auth, #Page__Register, #Page__Interest) {
+    @apply bg-youapp-gradient bg-cover;
   }
 }
 
 #RootLayout section {
   @apply mx-auto max-w-[120rem] px-32;
+}
+
+.text-blue-gradient {
+  background: linear-gradient(
+    134.86deg,
+    #abfffd 2.64%,
+    #4599db 102.4%,
+    #aadaff 102.4%
+  );
+
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+}
+
+.text-golden {
+  background: linear-gradient(
+      74.08deg,
+      #94783e -6.8%,
+      #f3eda6 16.76%,
+      #f8fae5 30.5%,
+      #ffe2be 49.6%,
+      #d5be88 78.56%,
+      #f8fae5 89.01%,
+      #d5be88 100.43%
+    ),
+    linear-gradient(0deg, #ffffff, #ffffff);
+
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+}
+
+.golden {
+  background: linear-gradient(
+      74.08deg,
+      #94783e -6.8%,
+      #f3eda6 16.76%,
+      #f8fae5 30.5%,
+      #ffe2be 49.6%,
+      #d5be88 78.56%,
+      #f8fae5 89.01%,
+      #d5be88 100.43%
+    ),
+    linear-gradient(0deg, #ffffff, #ffffff);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(108.32deg, #62cdcb 24.88%, #4599db 78.49%);
 }

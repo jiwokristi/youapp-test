@@ -1,3 +1,5 @@
+'use client';
+
 import { ForwardedRef, forwardRef } from 'react';
 import type { VariantProps } from 'class-variance-authority';
 import clsx from 'clsx';
@@ -7,10 +9,10 @@ import { inputVariants } from '@/lib/constants/variants/input';
 /**
  *  * How to implement a search feature:
  *  @property {HTMLInputTypeAttribute} type
- *  The type of the input element. It should be "search".
+ *  @description The type of the input element. It should be "search".
  *
  *  @property {ChangeEventHandler} onChange
- *  The change event listener of the input element. You should import searchHandler from useSearch and pass in event.target.value as the argument.
+ *  @description The change event listener of the input element. You should import searchHandler from useSearch and pass in event.target.value as the argument.
  *
  *  @example
  *  import { useSearch } from '@/lib/hooks/useSearch'
@@ -21,9 +23,8 @@ import { inputVariants } from '@/lib/constants/variants/input';
  *
  *
  *  @property {HTMLAttributes} defaultValue
- *  You should import searchParams from useSearch and get "query" for the defaultValue.
- *  ? Because if the user reloads the page the params will stay correct.
- *  ? Because if the user pastes the url from somewhere else the input element will be populated with the correct value.
+ *  @description You should import searchParams from useSearch and get "query" for the defaultValue. By doing so, if the user reloads the page the params will stay correct, and if the user pastes the url from somewhere else the input element will be populated with the correct value.
+ * 
  *  @example
  *  import { useSearch } from '@/lib/hooks/useSearch'
  *
@@ -34,7 +35,6 @@ import { inputVariants } from '@/lib/constants/variants/input';
  *  * Icons style guide:
  *  @property {ReactNode} startIcon
  *  @property {ReactNode} endIcon
- *  The width and height of the icons should be 16px for them to look good.
  *  
  *  @example
  *  import { Eye, EyeOff } from 'lucide-react'
@@ -72,6 +72,7 @@ const Input = (
     variant,
     size,
     color,
+    align,
     errorMessage,
     onIconClick,
     ...props
@@ -84,7 +85,7 @@ const Input = (
       className={`flex w-full flex-col-reverse ${containerClasses}`}
     >
       {errorMessage && (
-        <span className="mt-8 text-12 font-medium tracking-0.1 text-red">
+        <span className="mt-8 text-[1.3rem] font-medium tracking-0.1">
           {errorMessage}
         </span>
       )}
@@ -95,7 +96,7 @@ const Input = (
             id="StartIcon"
             onClick={onIconClick}
             className={clsx(
-              'absolute left-16 top-1/2 z-10 flex h-fit -translate-y-1/2 items-center [&>svg]:stroke-gray-500 [&>svg]:text-gray-500',
+              'absolute left-16 top-1/2 z-10 flex h-fit -translate-y-1/2 items-center',
               {
                 'cursor-pointer': onIconClick,
                 'pointer-events-none': !onIconClick,
@@ -108,7 +109,7 @@ const Input = (
         <input
           type="text"
           className={clsx(
-            `${inputVariants({ variant, size, color })} ${inputClasses}`,
+            `${inputVariants({ variant, size, color, align })} ${inputClasses}`,
             {
               'pl-48': startIcon,
               'pr-48': endIcon,
@@ -122,7 +123,7 @@ const Input = (
             id="EndIcon"
             onClick={onIconClick}
             className={clsx(
-              'absolute right-16 top-1/2 z-10 flex h-fit -translate-y-1/2 items-center [&>svg]:stroke-gray-500 [&>svg]:text-gray-500',
+              'absolute right-16 top-1/2 z-10 flex h-fit -translate-y-1/2 items-center',
               {
                 'cursor-pointer': onIconClick,
                 'pointer-events-none': !onIconClick,
@@ -139,18 +140,6 @@ const Input = (
           >
             {label}
           </label>
-        )}
-
-        {/* ----- Border Animation ----- */}
-        {variant === 'plain' && (
-          <>
-            <span className="absolute bottom-0 left-0 h-[0.205rem] w-0 bg-primary transition-all ease-in peer-focus:w-1/2">
-              &nbsp;
-            </span>
-            <span className="absolute bottom-0 right-0 h-[0.205rem] w-0 bg-primary transition-all ease-in peer-focus:w-1/2">
-              &nbsp;
-            </span>
-          </>
         )}
       </div>
     </div>

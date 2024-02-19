@@ -1,13 +1,10 @@
+'use client';
+
 import { useFormStatus } from 'react-dom';
 import type { VariantProps } from 'class-variance-authority';
 import ReactLoading from 'react-loading';
 
-import {
-  ButtonColors,
-  ButtonVariants,
-  buttonVariants,
-} from '@/lib/constants/variants/button';
-import { getButtonLoadingColor } from '@/lib/helpers/getter';
+import { buttonVariants } from '@/lib/constants/variants/button';
 
 export interface ButtonProps
   extends Omit<React.ComponentProps<'button'>, 'color'>,
@@ -21,6 +18,7 @@ export const Button = ({
   variant,
   size,
   color,
+  shadowSize,
   children,
   isDisabled = false,
   ...props
@@ -31,19 +29,11 @@ export const Button = ({
     <button
       aria-disabled={pending || isDisabled}
       disabled={pending || isDisabled}
-      className={`${buttonVariants({ variant, size, color })} ${classes}`}
+      className={`${buttonVariants({ variant, size, color, shadowSize })} ${classes}`}
       {...props}
     >
       {pending ? (
-        <ReactLoading
-          type="balls"
-          width={32}
-          height={32}
-          color={getButtonLoadingColor(
-            variant as ButtonVariants,
-            color as ButtonColors,
-          )}
-        />
+        <ReactLoading type="balls" width={32} height={32} color="#FFF" />
       ) : (
         children
       )}
