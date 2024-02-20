@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useContext, useEffect } from 'react';
 import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +11,7 @@ import { Input } from '@/components/input';
 import { Eye, EyeOff } from '@/components/icons';
 import { GoldenUnderline } from '@/components/GoldenUnderline';
 
-import { authenticate } from '@/lib/actions/auth';
+import { registerUser } from '@/lib/actions/auth';
 
 import {
   UserRegister,
@@ -19,12 +19,12 @@ import {
   userRegisterSchema,
 } from '@/lib/validations/auth';
 
-import { ErrorState, errorState } from '@/lib/constants/error-state';
-
-import { errorBEHandler } from '@/lib/helpers/errorHandler';
+import { ToastContext } from '@/lib/contexts/toast';
 
 export default function Form({ children }: { children: ReactNode }) {
-  const [errorMessage, dispatchForm] = useFormState(authenticate, errorState);
+  const { onToggle } = useContext(ToastContext);
+
+  const [errorMessage, dispatch] = useFormState(registerUser, undefined);
 
   const [reveal, setReveal] = useState(false);
   const [revealConfirm, setRevealConfirm] = useState(false);
@@ -37,13 +37,19 @@ export default function Form({ children }: { children: ReactNode }) {
     defaultValues: userDefaults,
     mode: 'onTouched',
   });
-  console.log('errorMessage', errorBEHandler(errorMessage as ErrorState));
+
+  useEffect(() => {
+    if (errorMessage) {
+      onToggle(errorMessage, 'danger', 2000);
+    }
+  }, [errorMessage, onToggle]);
+
   return (
     <form
       id="Form__Register"
       noValidate
       className="mx-auto flex w-full max-w-[50rem] flex-col smaller-tablets:-translate-y-96 landscape-tablets:translate-y-0"
-      action={dispatchForm}
+      action={dispatch}
     >
       <Back classes="mb-96 -translate-x-12 landscape-tablets:mb-48" />
       {children}

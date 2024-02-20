@@ -3,7 +3,8 @@
 import { usePathname, useParams } from 'next/navigation';
 
 import { Back } from '@/components/button';
-import { Tridots } from '@/components/icons';
+
+import ShowMore from './ShowMore';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     >
       <div className="relative mb-24 flex w-full items-center justify-between">
         <Back classes="-translate-x-12" />
-        {!onInterestPage && <Tridots classes="translate-x-12" />}
+        {!onInterestPage && <ShowMore />}
         {!onInterestPage && (
           <span className="absolute left-1/2 -translate-x-1/2 text-14 font-semibold">
             @{username}

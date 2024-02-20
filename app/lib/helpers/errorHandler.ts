@@ -1,36 +1,32 @@
-import { ErrorState } from '@/lib/constants/error-state';
+import { AuthError } from 'next-auth';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 /**
- *  * How to implement errorBEHandler:
  *  @param {Error} error
- *  The error you get after throwing an error instance in a try/catch block.
- * 
+ *  The error you get in a catch block.
+ *
  *  @returns {string}
- *  The string of the custom error message you're going to use in error.tsx.
- *  
- *  @description
- *  You should import this function, and return it in a useMemo in an error.tsx file.
- * 
- *  @example
- *  import { errorBEHandler } from '@/lib/helpers/errorHandler'
- * 
- *  const description = useMemo(() => {
-      return errorBEHandler(error)
-    }, [error])
-  
-    <p className="text-14 leading-paragraph mb-32">{description}</p>
+ *  The string of the custom error message.
  */
 
-type ErrorParams = (Error & { digest?: string }) | ErrorState;
+export const errorHandler = (error: Error): string | undefined => {
+  if (error instanceof AuthError) {
+    if (error.type === 'CredentialsSignin') {
+      return 'Oops! It looks like there might be a typo in your email or password.';
+    }
+    return 'We apologize, but it appears that something unexpected occurred.';
+  } else if (error instanceof PrismaClientKnownRequestError) {
+    if (error.code === 'P2002') {
+      switch ((error.meta?.target as string[])[0]) {
+        case 'username':
+          return 'Sorry, that username is already in use.';
+        case 'email':
+          return 'Sorry, that email is already in use.';
 
-export const errorBEHandler = (error: ErrorParams): string => {
-  switch (error.message) {
-    case 'Invalid credentials':
-      return 'It seems that you submitted the wrong email or password.';
-    case 'Something went wrong':
-      return 'It seems that something went wrong here.';
-
-    default:
-      return '';
+        default:
+          break;
+      }
+    }
+    return 'We apologize, but it appears that something unexpected occurred.';
   }
 };

@@ -2,67 +2,109 @@
 
 import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import prisma from '@/lib/db';
 
-import { User } from '@/lib/validations/auth';
-
 import { hashPassword } from '@/lib/helpers/hash';
 
-import { signIn } from '../../../auth';
-import { ErrorState } from '../constants/error-state';
+import { signIn, signOut } from '../../../auth';
 
-export const getUser = async (email: string): Promise<User | null> => {
+export const getUser = async (email: string) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-    return user as User;
-  } catch (error) {
-    console.error('ERROR:', error);
-    return null;
-  }
-};
-
-export const signUp = async (payload: User): Promise<User | null> => {
-  try {
-    const hashedPassword = await hashPassword(payload.password);
-    const user = await prisma.user.create({
-      data: {
-        email: payload.email,
-        password: hashedPassword,
-        isNewUser: payload.isNewUser,
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          {
+            email,
+          },
+          {
+            username: email,
+          },
+        ],
       },
     });
 
-    return user as User;
+    return user;
   } catch (error) {
-    console.error('ERROR:', error);
-    return null;
+    console.log('ERROR GET USER ----->', error);
   }
 };
 
-export async function authenticate(prevState: ErrorState, formData: FormData) {
+export const registerUser = async (
+  state: string | undefined,
+  formData: FormData,
+) => {
   try {
-    const credentials = {
-      email: formData.get('email'),
-      password: formData.get('password'),
-      // ? When a boolean value is true FormData API converts it to "on" and when the value is false it will be converted to null. Do this to convert it to boolean.
-      isNewUser: !!formData.get('isNewUser'),
-    };
+    const payload = Object.fromEntries(formData.entries());
+    const hashedPassword = await hashPassword(payload.password as string);
+    const user = await prisma.user.create({
+      data: {
+        email: payload.email as string,
+        username: payload.username as string,
+        password: hashedPassword as string,
+      },
+    });
 
-    await signIn('credentials', credentials);
+    if (user) {
+      await signIn('credentials', {
+        email: payload.email,
+        password: payload.password,
+      });
+    }
   } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return { code: 401, message: 'Invalid credentials' } as ErrorState;
-        default:
-          return { code: 500, message: 'Internal server error' } as ErrorState;
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        if ((error.meta?.target as string[])[0] === 'username') {
+          return 'Sorry, that username is already in use.';
+        }
+        return 'Sorry, that email is already in use.';
       }
+    } else if (error instanceof AuthError) {
+      if (error.type === 'CredentialsSignin') {
+        return 'Oops! It looks like there might be a typo in your email or password.';
+      }
+      return 'We apologize, but it appears that something unexpected occurred.';
     }
   }
 
-  // ? Redirect works by throwing an error, which would be caught by the catch block. To avoid this, you can call redirect after try/catch. redirect would only be reachable if try is successful.
-  redirect('/');
-}
+  redirect(`/${formData.get('username')}/profile`);
+};
+
+export const authenticateUser = async (
+  state: string | undefined,
+  formData: FormData | { email: string; password: string },
+) => {
+  try {
+    let credentials;
+
+    if (formData instanceof FormData) {
+      credentials = {
+        email: formData.get('email'),
+        password: formData.get('password'),
+      };
+    } else {
+      credentials = formData;
+    }
+
+    await signIn('credentials', credentials);
+  } catch (error) {
+    console.log('ERROR ----->', error);
+    if (error instanceof AuthError) {
+      if (error.type === 'CredentialsSignin') {
+        return 'Oops! It looks like there might be a typo in your email or password.';
+      }
+      return 'We apologize, but it appears that something unexpected occurred.';
+    }
+  }
+
+  if (formData instanceof FormData) {
+    const url = `${(formData.get('email') as string).split('@')[0]}/profile`;
+    redirect(url);
+  }
+  redirect(`/${formData.email.split('@')[0]}/profile`);
+};
+
+export const signOutUser = async () => {
+  await signOut();
+};

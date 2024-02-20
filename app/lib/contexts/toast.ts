@@ -1,16 +1,26 @@
-import { createContext, ReactNode } from 'react';
+import { createContext } from 'react';
 
-import { Toggle, toggleDefaults } from './toggle';
-
-export interface Toast extends Toggle {
-  title: string;
-  description: string;
-  icon?: ReactNode;
+type ToastVariants = 'success' | 'danger';
+export interface Toast {
+  variant: ToastVariants;
+  open: boolean;
+  fields: string[];
+  message: string;
+  openDuration?: number;
+  onToggle: (
+    message?: string,
+    variant?: ToastVariants,
+    openDuration?: number,
+  ) => void;
+  onToggleFields: (name: string) => void;
 }
 
 export const ToastContext = createContext<Toast>({
-  ...toggleDefaults,
-  title: '',
-  description: '',
-  icon: null,
+  variant: 'success',
+  open: false,
+  fields: [],
+  message: '',
+  openDuration: undefined,
+  onToggle: (message, variant, openDuration) => {},
+  onToggleFields: name => {},
 });

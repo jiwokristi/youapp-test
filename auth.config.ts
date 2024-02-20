@@ -10,7 +10,6 @@ export const authConfig = {
   },
   session: {
     strategy: 'jwt',
-    // ? Expires in 24 hours.
     maxAge: 3600,
   },
   secret: process.env.NEXTAUTH_SECRET,
@@ -18,10 +17,11 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
-      const protectedSegments = ['booking'];
-      const onSignInPage = nextUrl.pathname.startsWith('/sign-in');
+      const protectedSegments = ['profile', 'interest'];
+      const onAuthPage = nextUrl.pathname.startsWith('/auth');
+      const onRegisterPage = nextUrl.pathname.startsWith('/register');
 
-      if (isLoggedIn && onSignInPage) {
+      if (isLoggedIn && (onAuthPage || onRegisterPage)) {
         return Response.redirect(new URL('/', nextUrl));
       }
 
@@ -34,7 +34,6 @@ export const authConfig = {
         return false;
       }
 
-      // ? Fallback: uncomment to authorize users to access other pages (not including protected segments) even if they aren't logged in.
       return true;
     },
   },

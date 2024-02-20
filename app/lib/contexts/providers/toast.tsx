@@ -1,37 +1,71 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
+
+import { Toast as ToastComponent } from '@/components/Toast';
 
 import { ToastContext, Toast } from '@/lib/contexts/toast';
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
-  const [{ open, title, description, fields, onToggle, onToggleFields }, set] =
-    useState<Toast>({
-      open: false,
-      title: '',
-      description: '',
-      fields: [],
-      onToggle: () => set(p => ({ ...p, open: !p.open })),
-      onToggleFields: name => {
+  const [
+    { variant, open, fields, message, openDuration, onToggle, onToggleFields },
+    set,
+  ] = useState<Toast>({
+    variant: 'success',
+    open: false,
+    fields: [],
+    message: '',
+    openDuration: undefined,
+    onToggle: (message, variant, openDuration) =>
+      set(p => ({
+        ...p,
+        open: !p.open,
+        message: message || '',
+        variant: variant || 'success',
+        openDuration,
+      })),
+    onToggleFields: name => {
+      set(p => ({
+        ...p,
+        fields: p.fields.includes(name)
+          ? p.fields.filter(field => field !== name)
+          : p.fields.concat(name),
+      }));
+    },
+  });
+
+  useEffect(() => {
+    console.log('USE EFFECT!', open);
+    if (open && openDuration) {
+      setTimeout(() => {
         set(p => ({
           ...p,
-          fields: p.fields.includes(name)
-            ? p.fields.filter(field => field !== name)
-            : p.fields.concat(name),
+          open: false,
+          message: '',
+          variant: 'success',
         }));
-      },
-    });
+      }, openDuration);
+    }
+  }, [openDuration, open]);
 
   const value = {
+    variant,
     open,
-    title,
-    description,
     fields,
+    message,
+    openDuration,
     onToggle,
     onToggleFields,
   };
 
   return (
-    <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
+    <ToastContext.Provider value={value}>
+      <ToastComponent
+        open={open && (!!message || !!openDuration)}
+        message={message}
+        variant={variant}
+      />
+      {children}
+    </ToastContext.Provider>
   );
 };
