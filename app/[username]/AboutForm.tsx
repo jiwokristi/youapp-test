@@ -81,7 +81,7 @@ export default function AboutForm({
     <form
       id="Form__About"
       noValidate
-      className="relative mb-16 min-h-[12rem] w-full rounded-2xl bg-initial-state-medium p-24 pl-32"
+      className="relative mb-16 min-h-[12rem] w-full max-w-[50rem] rounded-2xl bg-initial-state-medium p-24 pl-32"
       action={actionWithArgs}
     >
       {userSessionId && userSessionId === user?.id && (
@@ -281,7 +281,7 @@ export default function AboutForm({
                     setValue(item.name as keyof About, date.toISOString(), {
                       shouldDirty: true,
                     }),
-                  initialValue: user
+                  initialValue: user?.profile?.dob
                     ? new Date(user.profile?.dob as string)
                     : undefined,
                 }}

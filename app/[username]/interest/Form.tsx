@@ -19,27 +19,25 @@ export default function Form({ initialValues }: { initialValues: Interest[] }) {
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-[50rem] flex-col smaller-tablets:-translate-y-96 landscape-tablets:translate-y-0">
-      <Controller
-        name="name"
-        control={control}
-        render={({ field }) => {
-          return (
-            <Select<Option, true>
-              isMulti
-              name="name"
-              options={interests}
-              defaultValue={initialValues?.map(({ name }) => ({
-                label: name,
-                value: name,
-              }))}
-              onChange={option => {
-                field.onChange((option as Option[]).map(({ value }) => value));
-              }}
-            />
-          );
-        }}
-      />
-    </div>
+    <Controller
+      name="name"
+      control={control}
+      render={({ field }) => {
+        return (
+          <Select<Option, true>
+            isMulti
+            name="name"
+            options={interests}
+            defaultValue={initialValues?.map(({ name }) => ({
+              label: name,
+              value: name,
+            }))}
+            onChange={option => {
+              field.onChange((option as Option[]).map(({ value }) => value));
+            }}
+          />
+        );
+      }}
+    />
   );
 }

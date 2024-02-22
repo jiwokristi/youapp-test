@@ -17,7 +17,6 @@ import AboutValues from './AboutValues';
 export default async function Page({
   params,
 }: {
-  children: React.ReactNode;
   params: { username: string };
 }) {
   const { username } = params;
@@ -32,9 +31,9 @@ export default async function Page({
   return (
     <section
       id="Page__Profile"
-      className="flex min-h-screen flex-col items-center py-96 smaller-tablets:justify-center landscape-tablets:py-48"
+      className="flex min-h-screen flex-col items-center py-96 smaller-tablets:justify-center"
     >
-      <div className="relative mb-24 flex w-full items-center justify-between">
+      <div className="relative mb-24 flex w-full max-w-[50rem] items-center justify-between">
         <Back classes="-translate-x-12" />
         <ShowMore />
         <span className="absolute left-1/2 -translate-x-1/2 text-14 font-semibold">

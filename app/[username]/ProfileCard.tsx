@@ -5,7 +5,7 @@ import { User } from '@/lib/validations/user';
 
 export default function ProfileCard({ user }: { user: User }) {
   return (
-    <div className="mb-24 flex h-[19rem] w-full flex-col justify-end gap-12 rounded-2xl bg-initial-state-light p-16">
+    <div className="mb-24 flex h-[19rem] w-full max-w-[50rem] flex-col justify-end gap-12 rounded-2xl bg-initial-state-light p-16">
       <p className="text-16 font-bold">
         @{user?.username},{' '}
         {user?.profile?.dob && getAge(user?.profile?.dob as string)}
