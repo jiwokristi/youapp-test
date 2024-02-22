@@ -2,7 +2,6 @@
 
 import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 import prisma from '@/lib/db';
 
@@ -94,10 +93,6 @@ export const saveProfile = async (
       height: formData.get('height') as string,
       weight: formData.get('weight') as string,
     };
-
-    if (Object.values(payload).every(val => !val)) {
-      return null;
-    }
 
     if (profileId !== 'undefined') {
       await prisma.profile.update({
