@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect, ReactNode, useContext, ChangeEvent } from 'react';
+import { useEffect, ReactNode, useContext, ChangeEvent, useState } from 'react';
+import Image from 'next/image';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 import clsx from 'clsx';
 
 import { Input } from '@/components/input';
 import { Select, Option, GroupOption } from '@/components/Select';
 import { DatePicker } from '@/components/datepicker/DatePicker';
+import { Plus } from '@/components/icons';
 
 import { About, User, aboutSchema } from '@/lib/validations/user';
 
@@ -19,10 +22,9 @@ import { ToastContext } from '@/lib/contexts/toast';
 
 import { aboutFormFields } from '@/lib/constants/form-fields';
 import { selectStyles } from '@/lib/constants/variants/select';
+import { allowedExtensions } from '@/lib/constants/extension';
 
 import EditButton from './EditButton';
-import { Plus } from '@/components/icons';
-import { allowedExtensions } from '@/lib/constants/extension';
 
 export default function AboutForm({
   userSessionId,
@@ -33,11 +35,11 @@ export default function AboutForm({
   user: User | null;
   children: ReactNode;
 }) {
-  const { fields } = useContext(ToastContext);
+  const { onToggle, fields } = useContext(ToastContext);
 
   const isShow = fields.includes('about');
 
-  // const [image, setImage] = useState<string>()
+  const [image, setImage] = useState<File>();
 
   const {
     register,
@@ -48,6 +50,8 @@ export default function AboutForm({
   } = useForm<About>({
     resolver: zodResolver(aboutSchema),
     defaultValues: {
+      id: user?.profile?.id || null,
+      userId: userSessionId || null,
       displayName: user ? user.profile?.displayName : '',
       gender: user ? user.profile?.gender : '',
       dob: user ? user.profile?.dob : null,
@@ -82,7 +86,27 @@ export default function AboutForm({
       id="Form__About"
       noValidate
       className="relative mb-16 min-h-[12rem] w-full max-w-[50rem] rounded-2xl bg-initial-state-medium p-24 pl-32"
-      action={actionWithArgs}
+      action={async (formData: FormData) => {
+        if (!isDirty) {
+          return;
+        }
+        try {
+          await actionWithArgs(formData);
+
+          const imageFormData = new FormData();
+          imageFormData.append('image', image as File);
+          imageFormData.append('userId', userSessionId as string);
+          imageFormData.append('id', String(user?.profile?.id));
+
+          await axios.post('http://localhost:4000/upload', imageFormData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+        } catch (error) {
+          console.log('ERROR CREATE PROFILE ----->', error);
+        }
+      }}
     >
       {userSessionId && userSessionId === user?.id && (
         <EditButton fieldName="about" />
@@ -106,34 +130,63 @@ export default function AboutForm({
                 'opacity-100': isShow,
               })}
             >
-              <div className="relative flex h-[5.7rem] w-[5.7rem] items-center justify-center rounded-3xl bg-white/5 transition-all ease-in hover:bg-white/10">
-                <input
-                  name={item.name}
-                  type="file"
-                  value=""
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    const selectedFile = e.target?.files?.[0];
+              <div className="relative flex h-[5.7rem] w-[5.7rem] items-center justify-center overflow-hidden rounded-3xl bg-white/5 transition-all ease-in hover:bg-white/10">
+                {image && (
+                  <Image
+                    src={URL.createObjectURL(image)}
+                    alt="Selected image."
+                    className="absolute"
+                    width={57}
+                    height={57}
+                  />
+                )}
+                <Controller
+                  name={item.name as keyof About}
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      type="file"
+                      value=""
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        const selectedFile = e.target?.files?.[0];
 
-                    if (selectedFile) {
-                      const fileExtension = selectedFile.name
-                        .split('.')
-                        ?.pop()
-                        ?.toLowerCase();
-                      if (
-                        !allowedExtensions.includes(fileExtension as string)
-                      ) {
-                        // error format
-                      }
+                        if (selectedFile) {
+                          const fileExtension = selectedFile.name
+                            .split('.')
+                            ?.pop()
+                            ?.toLowerCase();
+                          if (
+                            !allowedExtensions.includes(fileExtension as string)
+                          ) {
+                            onToggle(
+                              'Oops! We only accept PNG/JPG/JPEG files.',
+                              'danger',
+                              2000,
+                            );
+                            return;
+                          }
 
-                      if (selectedFile.size > 2 * 1000000) {
-                        // max 2 MB
-                      }
-
-                      // execute
-                    }
-                  }}
-                  className="absolute inset-x-0 inset-y-0 -translate-y-4 cursor-pointer opacity-0"
+                          if (selectedFile.size > 2 * 1000000) {
+                            onToggle(
+                              'Oops! Maximum file size is 2MB.',
+                              'danger',
+                              2000,
+                            );
+                            return;
+                          }
+                          setImage(selectedFile);
+                          // const reader = new FileReader();
+                          // reader.addEventListener('load', () => {
+                          //   field.onChange(reader.result);
+                          // });
+                          // reader.readAsDataURL(selectedFile);
+                        }
+                      }}
+                      className="absolute inset-x-0 inset-y-0 -translate-y-4 cursor-pointer opacity-0"
+                    />
+                  )}
                 />
+
                 <Plus classes="golden" />
               </div>
               <label htmlFor={item.name} className="text-12">

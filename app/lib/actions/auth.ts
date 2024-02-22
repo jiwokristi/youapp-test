@@ -22,6 +22,18 @@ export const registerUser = async (
         email: payload.email as string,
         username: payload.username as string,
         password: hashedPassword as string,
+        profile: {
+          create: {
+            displayName: null,
+            dob: null,
+            gender: null,
+            height: null,
+            horoscope: null,
+            image: null,
+            weight: null,
+            zodiac: null,
+          },
+        },
       },
     });
 
