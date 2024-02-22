@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
 
-import { getUser } from '@/lib/actions/auth';
+import { getUser } from '@/lib/actions/user';
 
 import { userAuthSchema } from '@/lib/validations/auth';
 
@@ -25,7 +25,7 @@ export const { auth, signIn, signOut } = NextAuth({
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
 
-          const user = await getUser(email);
+          const user = await getUser({ email });
 
           if (user) {
             const passwordsMatch = await bcrypt.compare(

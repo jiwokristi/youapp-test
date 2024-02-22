@@ -10,27 +10,6 @@ import { hashPassword } from '@/lib/helpers/hash';
 
 import { signIn, signOut } from '../../../auth';
 
-export const getUser = async (email: string) => {
-  try {
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          {
-            email,
-          },
-          {
-            username: email,
-          },
-        ],
-      },
-    });
-
-    return user;
-  } catch (error) {
-    console.log('ERROR GET USER ----->', error);
-  }
-};
-
 export const registerUser = async (
   state: string | undefined,
   formData: FormData,
@@ -53,6 +32,7 @@ export const registerUser = async (
       });
     }
   } catch (error) {
+    console.log('ERROR REGISTER USER ----->', error);
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
         if ((error.meta?.target as string[])[0] === 'username') {
@@ -68,7 +48,7 @@ export const registerUser = async (
     }
   }
 
-  redirect(`/${formData.get('username')}/profile`);
+  redirect(`/${formData.get('username')}`);
 };
 
 export const authenticateUser = async (
@@ -89,7 +69,7 @@ export const authenticateUser = async (
 
     await signIn('credentials', credentials);
   } catch (error) {
-    console.log('ERROR ----->', error);
+    console.log('ERROR AUTHENTICATE USER ----->', error);
     if (error instanceof AuthError) {
       if (error.type === 'CredentialsSignin') {
         return 'Oops! It looks like there might be a typo in your email or password.';
@@ -99,12 +79,12 @@ export const authenticateUser = async (
   }
 
   if (formData instanceof FormData) {
-    const url = `${(formData.get('email') as string).split('@')[0]}/profile`;
+    const url = `${(formData.get('email') as string).split('@')[0]}`;
     redirect(url);
   }
-  redirect(`/${formData.email.split('@')[0]}/profile`);
+  redirect(`/${formData.email.split('@')[0]}`);
 };
 
 export const signOutUser = async () => {
-  await signOut();
+  await signOut({ redirectTo: '/auth' });
 };

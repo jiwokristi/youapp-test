@@ -3,3 +3,4 @@ export * from './EyeOff';
 export * from './Chevron';
 export * from './Tridots';
 export * from './Pencil';
+export * from './Plus';
