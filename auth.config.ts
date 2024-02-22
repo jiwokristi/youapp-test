@@ -12,12 +12,24 @@ export const authConfig = {
     strategy: 'jwt',
     maxAge: 3600,
   },
+  cookies: {
+    sessionToken: {
+      name: 'jwtPayload',
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
+    session: ({ session, token }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: token.sub,
+      },
+    }),
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
-      const protectedSegments = ['profile', 'interest'];
+      const protectedSegments = ['interest'];
       const onAuthPage = nextUrl.pathname.startsWith('/auth');
       const onRegisterPage = nextUrl.pathname.startsWith('/register');
 

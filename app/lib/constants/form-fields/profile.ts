@@ -1,17 +1,23 @@
 import { genders } from '@/lib/constants/gender';
-import { heights } from '@/lib/constants/height';
+import { groupedHeights } from '@/lib/constants/height';
 import { weights } from '@/lib/constants/weight';
 
 export const aboutFormFields = [
   {
     id: 1,
-    name: 'name',
+    name: 'image',
+    label: 'Add image',
+    type: 'image',
+  },
+  {
+    id: 2,
+    name: 'displayName',
     placeholder: 'Enter name',
     label: 'Display name:',
     type: 'text',
   },
   {
-    id: 2,
+    id: 3,
     name: 'gender',
     placeholder: 'Select gender',
     label: 'Gender:',
@@ -19,34 +25,34 @@ export const aboutFormFields = [
     options: genders,
   },
   {
-    id: 3,
+    id: 4,
     name: 'dob',
     placeholder: 'DD MM YYYY',
     label: 'Birthday:',
     type: 'date',
   },
   {
-    id: 4,
+    id: 5,
     name: 'horoscope',
     label: 'Horoscope:',
     type: 'text',
   },
   {
-    id: 5,
+    id: 6,
     name: 'zodiac',
     label: 'Zodiac:',
     type: 'text',
   },
   {
-    id: 6,
+    id: 7,
     name: 'height',
     placeholder: 'Add height',
     label: 'Height:',
     type: 'select',
-    options: heights,
+    options: groupedHeights,
   },
   {
-    id: 7,
+    id: 8,
     name: 'weight',
     placeholder: 'Add weight',
     label: 'Weight:',

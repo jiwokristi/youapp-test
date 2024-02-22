@@ -5,24 +5,34 @@ import clsx from 'clsx';
 
 import { ToastContext } from '@/lib/contexts/toast';
 
-interface PopoverProps extends React.ComponentProps<'div'> {
+export interface PopoverProps extends React.ComponentProps<'div'> {
   position: 'left' | 'right';
   toggleComponent: React.ReactNode;
   classes?: string;
+  containerClasses?: string;
+  toggleComponentClasses?: string;
+  name: string;
 }
 
 export const Popover = ({
   position,
   toggleComponent,
   classes = '',
+  containerClasses = '',
+  toggleComponentClasses = '',
+  name,
   children,
   ...props
 }: PopoverProps) => {
-  const { open, onToggle } = useContext(ToastContext);
+  const { fields, onToggleFields } = useContext(ToastContext);
 
   return (
-    <div className="relative" {...props}>
-      <button type="button" onClick={() => onToggle()}>
+    <div className={`relative ${containerClasses}`} {...props}>
+      <button
+        type="button"
+        className={toggleComponentClasses}
+        onClick={() => onToggleFields(name)}
+      >
         {toggleComponent}
       </button>
       <div
@@ -31,8 +41,9 @@ export const Popover = ({
           {
             'left-0': position === 'left',
             'right-0': position === 'right',
-            'translate-y-32 opacity-100': open,
-            'pointer-events-none translate-y-0 opacity-0': !open,
+            'translate-y-full opacity-100': fields.includes(name),
+            'pointer-events-none translate-y-0 opacity-0':
+              !fields.includes(name),
           },
         )}
       >

@@ -35,6 +35,3 @@ export const userRegisterSchema = z
 
 export type UserAuth = z.infer<typeof userAuthSchema>;
 export type UserRegister = z.infer<typeof userRegisterSchema>;
-export interface User extends UserAuth, Omit<UserRegister, 'confirmPassword'> {
-  id: string | null;
-}

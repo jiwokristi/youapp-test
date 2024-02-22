@@ -97,6 +97,14 @@ const config: Config = {
       opacity: {
         5: '5%',
       },
+
+      keyframes: {
+        shimmer: {
+          '100%': {
+            transform: 'translateX(100%)',
+          },
+        },
+      },
     },
   },
   plugins: [],

@@ -35,7 +35,6 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
-    console.log('USE EFFECT!', open);
     if (open && openDuration) {
       setTimeout(() => {
         set(p => ({

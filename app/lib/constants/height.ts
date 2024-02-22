@@ -17,7 +17,7 @@ for (let feet = 4; feet <= 8; feet++) {
   }
 }
 
-export const heights = [
+export const groupedHeights = [
   {
     label: 'INCH',
     options: heightInches,
@@ -27,3 +27,5 @@ export const heights = [
     options: heightCm,
   },
 ];
+
+export const heights = heightCm.concat(heightInches);
