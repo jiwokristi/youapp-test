@@ -47,7 +47,9 @@ export default function Form({ children }: { children: ReactNode }) {
       action={dispatch}
     >
       <Back classes="mb-96 -translate-x-12 landscape-tablets:mb-48" />
+
       {children}
+
       <Input
         {...register('email')}
         type="email"

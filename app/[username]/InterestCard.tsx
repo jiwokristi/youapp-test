@@ -15,7 +15,7 @@ export default function InterestCard({
   userSessionId: string | null;
 }) {
   return (
-    <div className="relative min-h-[12rem] w-full rounded-2xl bg-initial-state-medium p-24 pl-32">
+    <div className="relative min-h-[12rem] w-full max-w-[50rem] rounded-2xl bg-initial-state-medium p-24 pl-32">
       {userSessionId && userSessionId === user?.id && (
         <EditButton fieldName="interest" username={user?.username} />
       )}
