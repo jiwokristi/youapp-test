@@ -11,6 +11,7 @@ import { UserAuth, UserRegister } from './auth';
 
 export const aboutSchema = z.object({
   id: z.number().nullish(),
+  userId: z.string().nullish(),
   displayName: z.string().nullish(),
   gender: z.enum(['', ...genders.map(({ value }) => value)]).nullish(),
   dob: z.string().datetime().nullish(),
@@ -18,6 +19,7 @@ export const aboutSchema = z.object({
   zodiac: z.enum(['', ...zodiacs.map(value => value)]).nullish(),
   height: z.enum(['', ...heights.map(({ value }) => value)]).nullish(),
   weight: z.enum(['', ...weights.map(({ value }) => value)]).nullish(),
+  image: z.string().nullish(),
 });
 
 export const interestSchema = z.object({
