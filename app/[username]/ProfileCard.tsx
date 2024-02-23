@@ -6,6 +6,7 @@ import { Chip } from '@/components/Chip';
 import { getAge } from '@/lib/helpers/getter';
 
 import { User } from '@/lib/validations/user';
+import Link from 'next/link';
 
 export default function ProfileCard({ user }: { user: User }) {
   const imageUrl = user?.profile?.image?.split('\\')?.at(-1);
@@ -17,20 +18,22 @@ export default function ProfileCard({ user }: { user: User }) {
       )}
     >
       {user?.profile?.image && (
-        <Image
-          src={`${process.env.BASE_FILE_URL}/${imageUrl}`}
-          alt="User image"
-          width={1000}
-          height={660}
-          className="absolute inset-x-0 inset-y-0 brightness-75"
-        />
+        <Link href={`${process.env.BASE_FILE_URL}/${imageUrl}`} target="_blank">
+          <Image
+            src={`${process.env.BASE_FILE_URL}/${imageUrl}`}
+            alt="User image"
+            width={1000}
+            height={660}
+            className="absolute inset-x-0 inset-y-0 brightness-75"
+          />
+        </Link>
       )}
-      <p className="z-10 text-16 font-bold">
+      <p className="z-10 w-fit text-16 font-bold">
         @{user?.username},{' '}
         {user?.profile?.dob && getAge(user?.profile?.dob as string)}
       </p>
-      <p className="z-10 text-[1.3rem]">{user?.profile?.gender || ''}</p>
-      <div className="z-10 flex items-center gap-8">
+      <p className="z-10 w-fit text-[1.3rem]">{user?.profile?.gender || ''}</p>
+      <div className="z-10 flex w-fit items-center gap-8">
         {user?.profile?.horoscope && (
           <Chip>
             <span>{user?.profile?.horoscope}</span>
