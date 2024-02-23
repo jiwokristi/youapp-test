@@ -34,7 +34,7 @@ export const authConfig = {
       const onRegisterPage = nextUrl.pathname.startsWith('/register');
 
       if (isLoggedIn && (onAuthPage || onRegisterPage)) {
-        return Response.redirect(new URL('/', nextUrl));
+        return Response.redirect(new URL(`/${auth?.user?.name}`, nextUrl));
       }
 
       if (

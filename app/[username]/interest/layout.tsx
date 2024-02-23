@@ -7,6 +7,16 @@ import { getUser, saveInterest } from '@/lib/actions/user';
 
 import Form from './Form';
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const { username } = params;
+
+  return { title: username + ' | Interest' };
+}
+
 export default async function Layout({
   children,
   params,

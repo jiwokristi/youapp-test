@@ -34,7 +34,7 @@ export const { auth, signIn, signOut } = NextAuth({
             );
             if (passwordsMatch) {
               // * Authenticated.
-              return user;
+              return { ...user, name: user.username };
             }
           }
         }

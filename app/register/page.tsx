@@ -1,5 +1,11 @@
+import { Metadata } from 'next';
+
 import RegisterForm from './Form';
 import FormHeader from './FormHeader';
+
+export const metadata: Metadata = {
+  title: 'Create an account',
+};
 
 export default function Page() {
   return (

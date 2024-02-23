@@ -14,6 +14,16 @@ import AboutForm from './AboutForm';
 import InterestCard from './InterestCard';
 import AboutValues from './AboutValues';
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const { username } = params;
+
+  return { title: username };
+}
+
 export default async function Page({
   params,
 }: {
