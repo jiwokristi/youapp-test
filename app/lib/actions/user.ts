@@ -73,7 +73,6 @@ export const getInterests = async (
 
 export const saveProfile = async (
   date: string,
-  userId: string,
   profileId: string,
   isDirty: string,
   username: string,
@@ -94,32 +93,20 @@ export const saveProfile = async (
       weight: formData.get('weight') as string,
     };
 
-    if (profileId !== 'undefined') {
-      await prisma.profile.update({
-        where: {
-          id: +profileId,
-        },
-        data: {
-          ...payload,
-        },
-      });
-    } else {
-      await prisma.profile.create({
-        data: {
-          ...payload,
-          user: {
-            connect: {
-              id: userId,
-            },
-          },
-        },
-      });
-    }
+    await prisma.profile.update({
+      where: {
+        id: +profileId,
+      },
+      data: {
+        ...payload,
+      },
+    });
   } catch (error) {
-    console.log('ERROR CREATE PROFILE ----->', error);
+    console.log('ERROR SAVE PROFILE ----->', error);
   }
 
   revalidatePath(`/${username}`);
+  redirect(`/${username}`);
 };
 
 export const saveInterest = async (
@@ -128,6 +115,8 @@ export const saveInterest = async (
   formData: FormData,
 ) => {
   try {
+    const extractedData = formData.getAll('name');
+
     const existingInterests = await prisma.interest.findMany({
       where: {
         userId,
@@ -140,22 +129,22 @@ export const saveInterest = async (
           userId,
         },
       });
+
+      if (extractedData[0] === '') {
+        return;
+      }
     }
 
-    const extractedData = formData.getAll('name');
+    const payload = extractedData.map(name => ({
+      name: name as string,
+      userId,
+    }));
 
-    if (extractedData[0] !== '') {
-      const payload = extractedData.map(name => ({
-        name: name as string,
-        userId,
-      }));
-
-      await prisma.interest.createMany({
-        data: [...payload],
-      });
-    }
+    await prisma.interest.createMany({
+      data: [...payload],
+    });
   } catch (error) {
-    console.log('ERROR CREATE INTEREST ----->', error);
+    console.log('ERROR SAVE INTEREST ----->', error);
   }
 
   revalidatePath(`/${username}`);

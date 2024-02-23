@@ -55,8 +55,12 @@ export const selectStyles: StylesConfig = {
   indicatorSeparator: () => ({
     display: 'none',
   }),
-  indicatorsContainer: () => ({
+  dropdownIndicator: () => ({
     display: 'none',
+  }),
+  clearIndicator: baseStyles => ({
+    ...baseStyles,
+    cursor: 'pointer',
   }),
   menu: baseStyles => ({
     ...baseStyles,

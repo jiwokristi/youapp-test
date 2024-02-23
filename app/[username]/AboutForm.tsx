@@ -68,7 +68,6 @@ export default function AboutForm({
   const actionWithArgs = saveProfile.bind(
     null,
     dynamicDob as string,
-    userSessionId as string,
     String(user?.profile?.id),
     String(isDirty),
     user?.username as string,
@@ -87,22 +86,32 @@ export default function AboutForm({
       noValidate
       className="relative mb-16 min-h-[12rem] w-full max-w-[50rem] rounded-2xl bg-initial-state-medium p-24 pl-32"
       action={async (formData: FormData) => {
-        if (!isDirty) {
-          return;
-        }
         try {
           await actionWithArgs(formData);
 
-          const imageFormData = new FormData();
-          imageFormData.append('image', image as File);
-          imageFormData.append('userId', userSessionId as string);
-          imageFormData.append('id', String(user?.profile?.id));
+          if (image) {
+            const imageFormData = new FormData();
+            imageFormData.append('image', image as File);
+            imageFormData.append('userId', userSessionId as string);
+            imageFormData.append('id', String(user?.profile?.id));
 
-          await axios.post('http://localhost:4000/upload', imageFormData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+            const { status } = await axios.post(
+              'http://localhost:4000/upload',
+              imageFormData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              },
+            );
+            if (status === 200) {
+              onToggle(
+                'Successfully uploaded photo! Refresh the page to see changes.',
+                'success',
+                2000,
+              );
+            }
+          }
         } catch (error) {
           console.log('ERROR CREATE PROFILE ----->', error);
         }
