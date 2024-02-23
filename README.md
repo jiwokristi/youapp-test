@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# YouApp - Frontend
 
-## Getting Started
+### 1. Install dependencies
 
-First, run the development server:
+`npm i`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+<br/>
+
+### 2. Configure database
+
+I chose **Supabase** platform to store data.
+
+Steps to reproduce:
+
+- Go to [Supabase](https://supabase.com/) and start your project
+- In the [dashboard](https://supabase.com/dashboard/projects) click new project, follow the instructions, generate a password and keep a copy of it
+- You need the connection URI for **DATABASE_URL** in **.env** that looks like this:
+
+`postgres://postgres.xqheiejnwcagcolaoahf:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres`
+
+- Paste your password into the placeholder without the square brackets, copy the url, and store it in **.env** alongside **BASE_FILE_URL** and **NEXTAUTH_SECRET**
+
+```js
+DATABASE_URL =
+  'postgres://postgres.xqheiejnwcagcolaoahf:dummypassword@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres';
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **BASE_FILE_URL** must be the same with the Backend's **BASE_URL**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```js
+BASE_FILE_URL = 'http://localhost:8080/uploads';
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+<br/>
 
-## Learn More
+### 3. Change the port in next.config.mjs to the Backend's running port
 
-To learn more about Next.js, take a look at the following resources:
+```js
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8080',
+        pathname: '/uploads/**',
+      },
+    ],
+  },
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+  <br />
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### 4. Change the port in AboutForm.tsx to the Backend's running port
 
-## Deploy on Vercel
+```js
+// At line 99:
+// With no 's'
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+'http://localhost:8080/upload';
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<br />
+
+### 5. Generate a secret key for NextAuth
+
+`openssl rand -base64 32`
+
+Store it in **.env**
+
+```js
+NEXTAUTH_SECRET = 'PASTE_GENERATED_KEY_HERE';
+```
+
+<br/>
+
+### 6. Run the application
+
+`npm run dev`
+
+<br/>
+
+# Project Description
+
+### This project implemented:
+
+- **Mobile first** design philosophy
+
+- **Atomic design** methodology
+
+- **NextAuth** as an authentication library with its experimental _version ^5.0.0-beta.9_ with its simplified set up and universal **auth()** that replaces getServerSession, getSession, withAuth, getToken and useSession in most cases
+
+- Newly stable **Server Actions** from the latest release of **NextJS 14** where I manipulated data directly using **PrismaClient** without the need of API endpoints
+
+- **Streaming** making use of **Suspense**
+
+- **Static & Dynamic rendering**
+
+- Form validations in /register and /auth
+
+- Protected routes and controls
+
+User can visit another user's profile by directly using their username as the slug, but can't manipulate their data.
+
+User can't visit the /auth and /register page when they've logged in.
+
+- **Metadata**

@@ -96,7 +96,7 @@ export default function AboutForm({
             imageFormData.append('id', String(user?.profile?.id));
 
             const { status } = await axios.post(
-              'http://localhost:4000/upload',
+              'http://localhost:8080/upload',
               imageFormData,
               {
                 headers: {
@@ -104,6 +104,7 @@ export default function AboutForm({
                 },
               },
             );
+
             if (status === 200) {
               onToggle(
                 'Successfully uploaded photo! Refresh the page to see changes.',
@@ -113,7 +114,7 @@ export default function AboutForm({
             }
           }
         } catch (error) {
-          console.log('ERROR CREATE PROFILE ----->', error);
+          console.log('ERROR UPLOAD ----->', error);
         }
       }}
     >
@@ -152,7 +153,7 @@ export default function AboutForm({
                 <Controller
                   name={item.name as keyof About}
                   control={control}
-                  render={({ field }) => (
+                  render={() => (
                     <input
                       type="file"
                       value=""
@@ -183,12 +184,8 @@ export default function AboutForm({
                             );
                             return;
                           }
+
                           setImage(selectedFile);
-                          // const reader = new FileReader();
-                          // reader.addEventListener('load', () => {
-                          //   field.onChange(reader.result);
-                          // });
-                          // reader.readAsDataURL(selectedFile);
                         }
                       }}
                       className="absolute inset-x-0 inset-y-0 -translate-y-4 cursor-pointer opacity-0"
